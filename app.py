@@ -9,8 +9,8 @@ CORS(app)
 @app.route("/wol", methods=["POST"])
 def hello():
     data = request.json
-    mac_address = data.get("mac-address")
     print(data)
+    mac_address = data.get("mac-address")
     send_magic_packet(mac_address)
 
     return jsonify({"message": "Magic packet sent"})
