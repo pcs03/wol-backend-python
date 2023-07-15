@@ -11,8 +11,7 @@ CORS(app)
 @app.route("/sendWol", methods=["POST"])
 def sendWol():
     data = request.get_json()
-    print(data)
-    mac_address = data["mac-address"]
+    mac_address = data["mac"]
     send_magic_packet(mac_address)
 
     return jsonify({"message": "Magic packet sent"})
@@ -23,25 +22,21 @@ def getDevices():
     with open("./data/devices.json") as file:
         devices_json = file.read()
 
-    print(devices_json)
-
     return json.loads(devices_json)
 
 
 @app.route("/addDevice", methods=["POST"])
 def addDevice():
     data = request.get_json()
-    print(data)
     with open("./data/devices.json", "r") as file:
-        devices_json = file.read()
+        devices_json = json.load(file)
 
-    new_devices_json = devices_json.append(data)
-    print(new_devices_json)
+    devices_json["devices"].append(data)
 
     with open("./data/devices.json", "w") as file:
-        json.dump(new_devices_json, file)
+        json.dump(devices_json, file)
 
-    return json.loads(new_devices_json)
+    return jsonify(devices_json)
 
 
 if __name__ == "__main__":
