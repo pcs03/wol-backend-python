@@ -66,13 +66,6 @@ def rmDevice():
     else:
         return jsonify({"status": "no valid device"})
 
-    # devices_json["devices"].append(data)
-
-    # with open("./data/devices.json", "w") as file:
-    #     json.dump(devices_json, file)
-
-    # return jsonify(devices_json)
-
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0")
