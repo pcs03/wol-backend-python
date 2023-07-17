@@ -1,5 +1,6 @@
 import json
-import uuid
+import platform
+import subprocess
 
 from flask import Flask, jsonify, request
 from flask_cors import CORS
@@ -14,6 +15,13 @@ def has_mac_address(array, mac_address):
         if item["mac"] == mac_address:
             return index
     return -1
+
+
+def ping_device(host):
+    param = "-n" if platform.system().lower() == "windows" else "-c"
+    command = ["ping", param, "1", host]
+
+    return subprocess.call(command) == 0
 
 
 @app.route("/sendWol", methods=["POST"])
@@ -65,6 +73,19 @@ def rmDevice():
         return jsonify(devices_json)
     else:
         return jsonify({"status": "no valid device"})
+
+
+@app.route("/ping", methods=["GET"])
+def ping():
+    with open("./data/devices.json", "r") as file:
+        devices_json = json.load(file)
+
+    ip_list = [
+        {"mac": i["mac"], "status": ping_device(i["ip"])}
+        for i in devices_json["devices"]
+    ]
+
+    return jsonify({"devices": ip_list})
 
 
 if __name__ == "__main__":
