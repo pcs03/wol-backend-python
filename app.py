@@ -75,17 +75,12 @@ def rmDevice():
         return jsonify({"status": "no valid device"})
 
 
-@app.route("/ping", methods=["GET"])
+@app.route("/ping", methods=["POST"])
 def ping():
-    with open("./data/devices.json", "r") as file:
-        devices_json = json.load(file)
+    data = request.get_json()
+    ip = data["ip"]
 
-    ip_list = [
-        {"mac": i["mac"], "status": ping_device(i["ip"])}
-        for i in devices_json["devices"]
-    ]
-
-    return jsonify({"devices": ip_list})
+    return jsonify({"status": ping_device(ip)})
 
 
 if __name__ == "__main__":
