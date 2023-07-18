@@ -1,13 +1,26 @@
 import json
 import platform
 import subprocess
+from datetime import datetime, timedelta, timezone
 
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+from flask_jwt_extended import (
+    JWTManager,
+    create_access_token,
+    get_jwt,
+    get_jwt_identity,
+    jwt_required,
+    unset_jwt_cookies,
+)
 from wakeonlan import send_magic_packet
 
 app = Flask(__name__)
 CORS(app)
+
+app.config["JWT_SECRET_KEY"] = "key"
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
+jwt = JWTManager(app)
 
 
 def has_mac_address(array, mac_address):
@@ -22,6 +35,19 @@ def ping_device(host):
     command = ["ping", param, "1", host]
 
     return subprocess.call(command) == 0
+
+
+@app.route("/token", methods=["POST"])
+def create_token():
+    username = request.json.get("username", None)
+    password = request.json.get("password", None)
+
+    if username != "testuser" or password != "test":
+        return {"msg": "Wrong email or password"}, 401
+
+    access_token = create_access_token(identity=username)
+    response = {"access_token": access_token}
+    return response
 
 
 @app.route("/sendWol", methods=["POST"])
