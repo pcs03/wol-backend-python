@@ -28,6 +28,15 @@ def ping_device(host):
     return subprocess.call(command) == 0
 
 
+def shutdown_device(username, ip):
+    ssh_param = f"{username}@{ip}"
+    return subprocess.run(
+        ["ssh", ssh_param, "sudo", "shutdown", "-h", "now"],
+        capture_output=True,
+        text=True,
+    )
+
+
 @app.route("/login", methods=["POST"])
 def login():
     data = request.get_json()
@@ -58,6 +67,20 @@ def sendWol():
     send_magic_packet(mac_address)
 
     return jsonify({"message": "Magic packet sent"})
+
+
+@app.route("/shutdown", methods=["POST"])
+def sendShutdown():
+    data = request.get_json()
+
+    username = data["username"]
+    ip = data["ip"]
+
+    output = shutdown_device(username, ip)
+    lines = output.stderr.splitlines()
+    print(lines)
+
+    return jsonify({"status": lines[0]})
 
 
 @app.route("/getDevices", methods=["GET"])
