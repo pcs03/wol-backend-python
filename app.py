@@ -55,7 +55,7 @@ def login():
             app.config["SECRET_KEY"],
         )
 
-        return jsonify({"token": token, "exp": exp_delta_minutes})
+        return jsonify({"token": token.decode(), "exp": exp_delta_minutes})
 
     return jsonify({"message": "Incorrect usename or password"})
 
