@@ -1,1 +1,16 @@
-{"devices": [{"name": "Desktop", "mac": "2CF05D0EB1B6", "ip": "192.168.2.162"}, {"name": "Server", "mac": "581122D8AC65", "ip": "192.168.2.160"}]}
+{
+  "devices": [
+    {
+      "name": "Desktop",
+      "mac": "2CF05D0EB1B6",
+      "ip": "192.168.2.162",
+      "username": "pstet"
+    },
+    {
+      "name": "Server",
+      "mac": "581122D8AC65",
+      "ip": "192.168.2.160",
+      "username": "pstet"
+    }
+  ]
+}
