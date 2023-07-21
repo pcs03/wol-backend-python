@@ -1,4 +1,5 @@
 import json
+import os
 import platform
 import subprocess
 from datetime import datetime, timedelta, timezone
@@ -12,6 +13,8 @@ app = Flask(__name__)
 CORS(app)
 
 app.config["SECRET_KEY"] = "key"
+
+project_base_path = os.path.dirname(os.path.realpath(__file__))
 
 
 def has_mac_address(array, mac_address):
@@ -85,7 +88,7 @@ def sendShutdown():
 
 @app.route("/getDevices", methods=["GET"])
 def getDevices():
-    with open("./data/devices.json") as file:
+    with open(os.path.join(project_base_path, "data/devices.json"), "r") as file:
         devices_json = file.read()
 
     return json.loads(devices_json)
@@ -94,12 +97,12 @@ def getDevices():
 @app.route("/addDevice", methods=["POST"])
 def addDevice():
     data = request.get_json()
-    with open("./data/devices.json", "r") as file:
+    with open(os.path.join(project_base_path, "data/devices.json"), "r") as file:
         devices_json = json.load(file)
 
     devices_json["devices"].append(data)
 
-    with open("./data/devices.json", "w") as file:
+    with open(os.path.join(project_base_path, "data/devices.json"), "w") as file:
         json.dump(devices_json, file)
     print(devices_json)
 
@@ -111,14 +114,14 @@ def rmDevice():
     data = request.get_json()
     mac = data["mac"]
 
-    with open("./data/devices.json", "r") as file:
+    with open(os.path.join(project_base_path, "data/devices.json"), "r") as file:
         devices_json = json.load(file)
 
     device_index = has_mac_address(devices_json["devices"], mac)
 
     if device_index != -1:
         devices_json["devices"].remove(devices_json["devices"][device_index])
-        with open("./data/devices.json", "w") as file:
+        with open(os.path.join(project_base_path, "data/devices.json"), "w") as file:
             json.dump(devices_json, file)
         return jsonify(devices_json)
     else:
