@@ -28,5 +28,5 @@ pip install -r requirements.txt
 ## Production server with gunicorn
 
 ```
-gunicorn --workers 4 --bind 0.0.0.0:5000 wsgi:app
+/srv/wol/wolBackend/venv/bin/waitress-serve  --port=5000 --call production:create_app
 ```
