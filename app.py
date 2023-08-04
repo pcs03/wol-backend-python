@@ -1,6 +1,7 @@
 import json
 import os
 import platform
+import sqlite3
 import subprocess
 from datetime import datetime, timedelta, timezone
 
@@ -9,12 +10,39 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from wakeonlan import send_magic_packet
 
+project_base_path = os.path.dirname(os.path.realpath(__file__))
+
 app = Flask(__name__)
 CORS(app)
 
-app.config["SECRET_KEY"] = "key"
+app.config["SECRET_KEY"] = "dsafas5f41dsa65f1564635dfs"
 
-project_base_path = os.path.dirname(os.path.realpath(__file__))
+db_path = os.path.join(project_base_path, "db/data.db")
+
+
+def create_db():
+    connection = sqlite3.connect(db_path)
+    cursor = connection.cursor()
+
+    cursor.execute(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='devices'"
+    )
+
+    if cursor.fetchone()[0] != 1:
+        {
+            cursor.execute(
+                "CREATE TABLE devices (device_name text, username text, mac text, ip text)"
+            )
+        }
+
+    cursor.execute(
+        "INSERT INTO devices VALUES (?,?,?,?)", ["server", "pstet", "FF", "122"]
+    )
+
+    for row in cursor.execute("SELECT * FROM devices"):
+        print(row)
+
+    connection.close()
 
 
 def has_mac_address(array, mac_address):
@@ -90,6 +118,8 @@ def sendShutdown():
 def getDevices():
     with open(os.path.join(project_base_path, "data/devices.json"), "r") as file:
         devices_json = file.read()
+
+    create_db()
 
     return json.loads(devices_json)
 
