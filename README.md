@@ -28,5 +28,5 @@ pip install -r requirements.txt
 ## Production server with gunicorn
 
 ```
-/srv/wol/wolBackend/venv/bin/waitress-serve  --port=5000 --call production:create_app
+/srv/wol/wolBackend/venv/bin/gunicorn -w 4 -b 0.0.0.0:5000 app:app
 ```
