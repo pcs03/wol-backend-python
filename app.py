@@ -83,7 +83,12 @@ def sendShutdown():
     lines = output.stderr.splitlines()
     print(lines)
 
-    return jsonify({"status": lines[0]})
+    if lines:
+        status = lines[0]
+    else:
+        status = "No response from device"
+
+    return jsonify({"status": status})
 
 
 @app.route("/getDevices", methods=["GET"])
