@@ -25,10 +25,12 @@ def has_mac_address(array, mac_address):
 
 
 def ping_device(host):
-    param = "-n" if platform.system().lower() == "windows" else "-c"
-    command = ["ping", param, "1", host]
+    response = os.system("ping -c 1 -w 1 " + host)
 
-    return subprocess.call(command) == 0
+    if response == 0:
+        return True
+    else:
+        return False
 
 
 def shutdown_device(username, ip):
